@@ -185,6 +185,8 @@
 					.join("<br/>");
 			};
 
+			let gameOver = false;
+
 			let tick = () => {
 				let newGame = JSON.parse(JSON.stringify(board));
 				let { x, y, shape } = piece;
@@ -196,13 +198,14 @@
 					}
 				}
 				updateHTML(newGame);
-                time++;
+				time++;
 				if (time % 30 == 0) {
 					if (!hasCollision({ ...piece, y: piece.y + 1 })) {
 						piece.y++;
 					} else {
 						if (piece.y === 0) {
 							alert("Game over :(");
+							gameOver = true;
 						} else {
 							let newBoard = JSON.parse(JSON.stringify(board));
 							let { x, y, shape } = piece;
@@ -219,7 +222,8 @@
 						}
 					}
 				}
-                requestAnimationFrame(tick)
+
+				if (!gameOver) requestAnimationFrame(tick);
 			};
 
 			requestAnimationFrame(tick);
