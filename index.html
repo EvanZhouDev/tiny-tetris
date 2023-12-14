@@ -1,258 +1,275 @@
 <!doctype html>
 <html>
-	<head>
-		<title>Tiny Tetris</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap"
-			rel="stylesheet"
-		/>
-	</head>
-	<body>
-		<style>
-			#game {
-				font-family: "Noto Sans Symbols 2", sans-serif;
-				line-height: 100px;
-				letter-spacing: -16px;
-				font-size: 100px;
-				margin-top: 10px;
-				width: 286px;
-				background-color: lightgrey;
-			}
 
-			* {
-				margin: 0px;
-				padding: 0px;
-			}
-		</style>
+<head>
+  <title>Tiny Tetris</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap" rel="stylesheet" />
+</head>
 
-		<p id="game">
-			⠀⠀⠀⠀⠀<br />
-			⠀⠀⠀⠀⠀<br />
-			⠀⠀⠀⠀⠀<br />
-			⠀⠀⠀⠀⠀<br />
-			⠀⠀⠀⠀⠀<br />
-		</p>
+<body>
+  <style>
+    #game {
+      font-family: "Noto Sans Symbols 2", sans-serif;
+      line-height: 100px;
+      letter-spacing: -16px;
+      font-size: 100px;
+      margin-top: 10px;
+      width: 286px;
+      background-color: lightgrey;
+    }
 
-		<script>
-			let time = 0;
+    * {
+      margin: 0px;
+      padding: 0px;
+    }
+  </style>
 
-			const generateNewGrid = () =>
-				Array(20)
-					.fill()
-					.map(() => Array(10).fill(0));
-			const rotate = {
-				cw: (matrix) =>
-					matrix[0].map((_, index) =>
-						matrix.map((row) => row[index]).reverse()
-					),
-				ccw: (matrix) =>
-					matrix[0].map((val, index) =>
-						matrix.map((row) => row[row.length - 1 - index])
-					),
-			};
+  <p id="game">
+    ⠀⠀⠀⠀⠀<br />
+    ⠀⠀⠀⠀⠀<br />
+    ⠀⠀⠀⠀⠀<br />
+    ⠀⠀⠀⠀⠀<br />
+    ⠀⠀⠀⠀⠀<br />
+  </p>
 
-			let hasCollision = (checkPiece = piece) => {
-				let { shape, x, y } = checkPiece;
-				for (let i = 0; i < shape.length; i++) {
-					for (let j = 0; j < shape[0].length; j++) {
-						if (shape[i][j] !== 0) {
-							let newI = y + i;
-							let newJ = x + j;
-							if (
-								board[newI] !== undefined &&
-								board[newI][newJ] !== undefined &&
-								board[newI][newJ] === 0
-							) {
-								// Can move piece!
-							} else {
-								return true;
-							}
-						}
-					}
-				}
-				return false;
-			};
+  <script>
+    let time = 0;
 
-			let pieces = [
-				[
-					[0, 0, 0, 0],
-					[1, 1, 1, 1],
-					[0, 0, 0, 0],
-					[0, 0, 0, 0],
-				],
-				[
-					[1, 0, 0],
-					[1, 1, 1],
-					[0, 0, 0],
-				],
-				[
-					[0, 0, 1],
-					[1, 1, 1],
-					[0, 0, 0],
-				],
-				[
-					[1, 1],
-					[1, 1],
-				],
-				[
-					[0, 1, 1],
-					[1, 1, 0],
-					[0, 0, 0],
-				],
-				[
-					[0, 1, 0],
-					[1, 1, 1],
-					[0, 0, 0],
-				],
-				[
-					[1, 1, 0],
-					[0, 1, 1],
-					[0, 0, 0],
-				],
-			];
+    const generateNewGrid = () =>
+      Array(20)
+        .fill()
+        .map(() => Array(10).fill(0));
+    const rotate = {
+      cw: (matrix) =>
+        matrix[0].map((_, index) =>
+          matrix.map((row) => row[index]).reverse()
+        ),
+      ccw: (matrix) =>
+        matrix[0].map((val, index) =>
+          matrix.map((row) => row[row.length - 1 - index])
+        ),
+    };
 
-			const generateNewBag = () => {
-				let newBag = JSON.parse(JSON.stringify(pieces));
+    let hasCollision = (checkPiece = piece) => {
+      let {shape, x, y} = checkPiece;
+      for (let i = 0; i < shape.length; i++) {
+        for (let j = 0; j < shape[0].length; j++) {
+          if (shape[i][j] !== 0) {
+            let newI = y + i;
+            let newJ = x + j;
+            if (
+              board[newI] !== undefined &&
+              board[newI][newJ] !== undefined &&
+              board[newI][newJ] === 0
+            ) {
+              // Can move piece!
+            } else {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    };
 
-				for (let i = newBag.length - 1; i > 0; i--) {
-					const j = Math.floor(Math.random() * (i + 1));
-					[newBag[i], newBag[j]] = [newBag[j], newBag[i]];
-				}
+    let pieces = [
+      [
+        [0, 0, 0, 0],
+        [1, 1, 1, 1],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      [
+        [1, 0, 0],
+        [1, 1, 1],
+        [0, 0, 0],
+      ],
+      [
+        [0, 0, 1],
+        [1, 1, 1],
+        [0, 0, 0],
+      ],
+      [
+        [1, 1],
+        [1, 1],
+      ],
+      [
+        [0, 1, 1],
+        [1, 1, 0],
+        [0, 0, 0],
+      ],
+      [
+        [0, 1, 0],
+        [1, 1, 1],
+        [0, 0, 0],
+      ],
+      [
+        [1, 1, 0],
+        [0, 1, 1],
+        [0, 0, 0],
+      ],
+    ];
 
-				return newBag;
-			};
+    const generateNewBag = () => {
+      let newBag = JSON.parse(JSON.stringify(pieces));
 
-			let generatePiece = () => {
-				let newPiece = bag.shift();
-				if (bag.length === 1) {
-					bag = generateNewBag();
-				}
-				return {
-					x: newPiece.length === 2 ? 4 : 3,
-					y: 0,
-					shape: newPiece,
-				};
-			};
+      for (let i = newBag.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newBag[i], newBag[j]] = [newBag[j], newBag[i]];
+      }
 
-			let bag = generateNewBag();
-			let board = generateNewGrid();
-			let piece = generatePiece();
+      return newBag;
+    };
 
-			let handleLineClear = () => {
-				let matrix = board;
-				let lines = 0;
-				for (let i = 0; i < matrix.length; i++) {
-					if (matrix[i].every((x) => x === 1)) {
-						matrix.splice(i, 1);
-						matrix.unshift(new Array(10).fill(0));
-						lines++;
-					}
-				}
-			};
+    let generatePiece = () => {
+      let newPiece = bag.shift();
+      if (bag.length === 1) {
+        bag = generateNewBag();
+      }
+      return {
+        x: newPiece.length === 2 ? 4 : 3,
+        y: 0,
+        shape: newPiece,
+      };
+    };
 
-			let updateHTML = (matrix) => {
-				let allBraille = [];
-				for (let i = 0; i < 5; i++) {
-					let row = [];
-					let currentSection = matrix.slice(i * 4, i * 4 + 4);
-					for (let j = 0; j < 5; j++) {
-						let brailleBinary = "";
-						for (let section of currentSection) {
-							brailleBinary += section.slice(j * 2, j * 2 + 2).join("");
-						}
+    let bag = generateNewBag();
+    let board = generateNewGrid();
+    let piece = generatePiece();
 
-						let addValue =
-							brailleBinary[0] * 1 +
-							brailleBinary[1] * 8 +
-							brailleBinary[2] * 2 +
-							brailleBinary[3] * 16 +
-							brailleBinary[4] * 4 +
-							brailleBinary[5] * 32 +
-							brailleBinary[6] * 64 +
-							brailleBinary[7] * 128;
+    let handleLineClear = () => {
+      let matrix = board;
+      let lines = 0;
+      for (let i = 0; i < matrix.length; i++) {
+        if (matrix[i].every((x) => x === 1)) {
+          matrix.splice(i, 1);
+          matrix.unshift(new Array(10).fill(0));
+          lines++;
+        }
+      }
+    };
 
-						row.push(
-							addValue == 0 ? "⠀" : String.fromCharCode(0x2800 + addValue)
-						);
-					}
-					allBraille.push(row);
-				}
+    let updateHTML = (matrix) => {
+      let allBraille = [];
+      for (let i = 0; i < 5; i++) {
+        let row = [];
+        let currentSection = matrix.slice(i * 4, i * 4 + 4);
+        for (let j = 0; j < 5; j++) {
+          let brailleBinary = "";
+          for (let section of currentSection) {
+            brailleBinary += section.slice(j * 2, j * 2 + 2).join("");
+          }
 
-				document.getElementById("game").innerHTML = allBraille
-					.map((x) => x.join(""))
-					.join("<br/>");
-			};
+          let addValue =
+            brailleBinary[0] * 1 +
+            brailleBinary[1] * 8 +
+            brailleBinary[2] * 2 +
+            brailleBinary[3] * 16 +
+            brailleBinary[4] * 4 +
+            brailleBinary[5] * 32 +
+            brailleBinary[6] * 64 +
+            brailleBinary[7] * 128;
 
-			let gameOver = false;
+          row.push(
+            addValue == 0 ? "⠀" : String.fromCharCode(0x2800 + addValue)
+          );
+        }
+        allBraille.push(row);
+      }
 
-			let tick = () => {
-				let newGame = JSON.parse(JSON.stringify(board));
-				let { x, y, shape } = piece;
-				for (let i = 0; i < shape.length; i++) {
-					for (let j = 0; j < shape[0].length; j++) {
-						if (shape[i][j] !== 0) {
-							newGame[y + i][x + j] = shape[i][j];
-						}
-					}
-				}
-				updateHTML(newGame);
-				time++;
-				if (time % 30 == 0) {
-					if (!hasCollision({ ...piece, y: piece.y + 1 })) {
-						piece.y++;
-					} else {
-						if (piece.y === 0) {
-							alert("Game over, refresh to play again");
-							gameOver = true;
-						} else {
-							let newBoard = JSON.parse(JSON.stringify(board));
-							let { x, y, shape } = piece;
-							for (let i = 0; i < shape.length; i++) {
-								for (let j = 0; j < shape[0].length; j++) {
-									if (shape[i][j] !== 0 && newBoard[y + i]) {
-										newBoard[y + i][x + j] = shape[i][j];
-									}
-								}
-							}
-							board = newBoard;
-							piece = generatePiece();
-							handleLineClear();
-						}
-					}
-				}
+      document.getElementById("game").innerHTML = allBraille
+        .map((x) => x.join(""))
+        .join("<br/>");
+    };
 
-				if (!gameOver) requestAnimationFrame(tick);
-			};
+    let gameOver = false;
 
-			requestAnimationFrame(tick);
+    let tick = () => {
+      let newGame = JSON.parse(JSON.stringify(board));
+      let {x, y, shape} = piece;
+      for (let i = 0; i < shape.length; i++) {
+        for (let j = 0; j < shape[0].length; j++) {
+          if (shape[i][j] !== 0) {
+            newGame[y + i][x + j] = shape[i][j];
+          }
+        }
+      }
+      updateHTML(newGame);
+      time++;
+      if (time % 30 == 0) {
+        if (!hasCollision({...piece, y: piece.y + 1})) {
+          piece.y++;
+        } else {
+          if (piece.y === 0) {
+            alert("Game over, refresh to play again");
+            gameOver = true;
+          } else {
+            let newBoard = JSON.parse(JSON.stringify(board));
+            let {x, y, shape} = piece;
+            for (let i = 0; i < shape.length; i++) {
+              for (let j = 0; j < shape[0].length; j++) {
+                if (shape[i][j] !== 0 && newBoard[y + i]) {
+                  newBoard[y + i][x + j] = shape[i][j];
+                }
+              }
+            }
+            board = newBoard;
+            piece = generatePiece();
+            handleLineClear();
+          }
+        }
+      }
 
-			document.addEventListener("keydown", function (event) {
-				if (event.key == "ArrowLeft") {
-					if (!hasCollision({ ...piece, x: piece.x - 1 })) {
-						piece.x--;
-					}
-				} else if (event.key == "ArrowRight") {
-					if (!hasCollision({ ...piece, x: piece.x + 1 })) {
-						piece.x++;
-					}
-				} else if (event.key == "ArrowUp") {
-					if (!hasCollision({ ...piece, shape: rotate.cw(piece.shape) })) {
-						piece.shape = rotate.cw(piece.shape);
-					}
-				} else if (event.key == "ArrowDown") {
-					if (!hasCollision({ ...piece, y: piece.y + 1 })) {
-						piece.y++;
-					}
-				} else if (event.key == " ") {
-					let dy = 0;
-					while (!hasCollision({ ...piece, y: piece.y + dy })) {
-						dy += 1;
-					}
-					piece.y += dy - 1;
-				}
-			});
-		</script>
-	</body>
+      if (!gameOver) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+
+    let keyPressMap = {};
+    let keyInfo = {};
+    document.addEventListener("keydown", function (event) {
+      if (event.key.repeating) {
+        return;
+      }
+      keyPressMap[event.key] = true;
+      keyInfo[event.key] = {firstTick: true};
+
+    })
+    document.addEventListener("keyup", function (event) {
+      keyPressMap[event.key] = false;
+    })
+
+    setInterval(() => {
+      if (keyPressMap["ArrowLeft"]) {
+        if (!hasCollision({...piece, x: piece.x - 1})) {
+          piece.x--;
+        }
+      } else if (keyPressMap["ArrowRight"]) {
+        if (!hasCollision({...piece, x: piece.x + 1})) {
+          piece.x++;
+        }
+      } else if (keyPressMap["ArrowUp"] && keyInfo["ArrowUp"].firstTick) {
+        if (!hasCollision({...piece, shape: rotate.cw(piece.shape)})) {
+          piece.shape = rotate.cw(piece.shape);
+        }
+      } else if (keyPressMap["ArrowDown"]) {
+        if (!hasCollision({...piece, y: piece.y + 1})) {
+          piece.y++;
+        }
+      } else if (keyPressMap[" "]) {
+        let dy = 0;
+        while (!hasCollision({...piece, y: piece.y + dy})) {
+          dy += 1;
+        }
+        piece.y += dy - 1;
+      }
+      for (key in keyInfo) {
+        keyInfo[key].firstTick = false;
+      }
+    }, 100);
+  </script>
+</body>
+
 </html>
