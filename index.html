@@ -198,10 +198,14 @@
       }
       updateHTML(newGame);
       time++;
+      if (time % 10 == 0) {
+        handleKeys();
+      }
       if (time % 30 == 0) {
-        if (!hasCollision({...piece, y: piece.y + 1})) {
+
+        if (!hasCollision({...piece, y: piece.y + 1}) && !keyPressMap["ArrowDown"]) {
           piece.y++;
-        } else {
+        } else if (!keyPressMap["ArrowDown"] || hasCollision({...piece, y: piece.y + 1})) {
           if (piece.y === 0) {
             alert("Game over, refresh to play again");
             gameOver = true;
@@ -230,45 +234,63 @@
     let keyPressMap = {};
     let keyInfo = {};
     document.addEventListener("keydown", function (event) {
-      if (event.key.repeating) {
+      if (keyPressMap[event.key]) {
         return;
       }
       keyPressMap[event.key] = true;
       keyInfo[event.key] = {firstTick: true};
 
-    })
-    document.addEventListener("keyup", function (event) {
-      keyPressMap[event.key] = false;
-    })
 
-    setInterval(() => {
       if (keyPressMap["ArrowLeft"]) {
         if (!hasCollision({...piece, x: piece.x - 1})) {
           piece.x--;
         }
-      } else if (keyPressMap["ArrowRight"]) {
+      } if (keyPressMap["ArrowRight"]) {
         if (!hasCollision({...piece, x: piece.x + 1})) {
           piece.x++;
         }
-      } else if (keyPressMap["ArrowUp"] && keyInfo["ArrowUp"].firstTick) {
+      }
+
+      if (keyPressMap["ArrowUp"]) {
         if (!hasCollision({...piece, shape: rotate.cw(piece.shape)})) {
           piece.shape = rotate.cw(piece.shape);
         }
-      } else if (keyPressMap["ArrowDown"]) {
-        if (!hasCollision({...piece, y: piece.y + 1})) {
-          piece.y++;
-        }
-      } else if (keyPressMap[" "]) {
+      }
+
+      if (keyPressMap[" "]) {
         let dy = 0;
         while (!hasCollision({...piece, y: piece.y + dy})) {
           dy += 1;
         }
         piece.y += dy - 1;
       }
+
+    })
+    document.addEventListener("keyup", function (event) {
+      keyPressMap[event.key] = false;
+    })
+
+    function handleKeys() {
+      if (keyPressMap["ArrowLeft"] && !keyInfo["ArrowLeft"].firstTick) {
+        if (!hasCollision({...piece, x: piece.x - 1})) {
+          piece.x--;
+        }
+      } if (keyPressMap["ArrowRight"] && !keyInfo["ArrowRight"].firstTick) {
+        if (!hasCollision({...piece, x: piece.x + 1})) {
+          piece.x++;
+        }
+      }
+
+      if (keyPressMap["ArrowDown"]) {
+        if (!hasCollision({...piece, y: piece.y + 1})) {
+          piece.y++;
+        }
+      }
+
       for (key in keyInfo) {
         keyInfo[key].firstTick = false;
       }
-    }, 100);
+    }
   </script>
 </body>
 
